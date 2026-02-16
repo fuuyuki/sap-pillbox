@@ -20,6 +20,7 @@ The device uses an OLED display, buzzer alarm, and capacitive touch sensors for 
 ---
 
 ## 📂 Project Structure
+```code
 sap-pillbox/
 ├── sketch_SAP.ino       # Main Arduino sketch
 ├── alarms.h             # Alarm + buzzer + medlog logic
@@ -28,7 +29,7 @@ sap-pillbox/
 ├── touch.h              # Touch sensor configuration + functions
 ├── touch.cpp            # Touch sensor implementation
 └── README.md            # Project documentation
-
+```
 
 ---
 
