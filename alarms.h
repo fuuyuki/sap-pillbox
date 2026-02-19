@@ -8,6 +8,8 @@
 // Declare extern so they’re defined in main.ino
 extern String apiKey; 
 extern String chipIdStr;  // device_id
+const unsigned long alarmTimeoutMs = 30UL * 1000UL; // 30 seconds
+// const unsigned long alarmTimeoutMs = 3UL * 60UL * 60UL * 1000UL // 3 hours
 
 String userId = ""; // will be fetched
 
@@ -60,12 +62,14 @@ void sendNotification(const String &pillname, const struct tm &now) {
 void sendMedlog(String pillname, struct tm now, String status) {
   char timeStr[40];
   strftime(timeStr, sizeof(timeStr), "%Y-%m-%dT%H:%M:%S", &now);
-  String scheduledTime = String(timeStr) + ".000Z";
+  // String scheduledTime = String(timeStr) + ".000Z";
+  String scheduledTime = String(timeStr);
 
-  String payload = "{\"user_id\":\"" + userId +
-                   "\",\"pillname\":\"" + pillname +
-                   "\",\"scheduled_time\":\"" + scheduledTime +
-                   "\",\"status\":\"" + status + "\"}";
+  String payload = "{\"pillname\":\"" + pillname +
+                 "\",\"scheduled_time\":\"" + scheduledTime +
+                 "\",\"status\":\"" + status +
+                 "\",\"user_id\":\"" + userId +
+                 "\",\"device_id\":\"" + chipIdStr + "\"}";
 
   HTTPClient http;
   String url = "https://sap.protofylabs.web.id/medlogs/" + chipIdStr;
@@ -114,7 +118,7 @@ void checkPillTimes() {
     // 60UL * 60UL = 3600 seconds
     // * 1000UL = convert seconds to milliseconds → 10,800,000 ms
     if (schedules[i].alarmActive &&
-        millis() - schedules[i].alarmStart > 3UL * 60UL * 60UL * 1000UL){
+        millis() - schedules[i].alarmStart > alarmTimeoutMs){
       Serial.printf(">>> Alarm timeout, pill missed: %s <<<\n", schedules[i].pillname.c_str());
       // digitalWrite(PIN_BUZZER, LOW);
       schedules[i].alarmActive = false;
