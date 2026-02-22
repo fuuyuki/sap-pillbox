@@ -3,6 +3,7 @@
 
 #include "time.h"
 #include "schedules.h"
+#include "74hc595.h"
 #include <HTTPClient.h>
 
 // Declare extern so they’re defined in main.ino
@@ -10,6 +11,7 @@ extern String apiKey;
 extern String chipIdStr;  // device_id
 const unsigned long alarmTimeoutMs = 30UL * 1000UL; // 30 seconds
 // const unsigned long alarmTimeoutMs = 3UL * 60UL * 60UL * 1000UL // 3 hours
+const int PIN_BUZZER = 26;
 
 String userId = ""; // will be fetched
 
@@ -87,6 +89,9 @@ void checkPillTimes() {
   struct tm now;
   if (!getLocalTime(&now)) return;
 
+  // Declare today's day index here
+  int todayIdx = now.tm_wday; // 0 = Sunday, 6 = Saturday
+
   for (int i = 0; i < scheduleCount; i++) {
     // Activation: exact time match
     if (now.tm_hour == schedules[i].doseTm.tm_hour &&
@@ -95,7 +100,10 @@ void checkPillTimes() {
         
       Serial.printf(">>> Alarm ON for %s! <<<\n", schedules[i].pillname.c_str());
 
-      // digitalWrite(PIN_BUZZER,HIGH);
+      // Update LEDs: turn on today's slot LED
+      digitalWrite(PIN_BUZZER,HIGH);
+      ledBits |= (1 << 7-todayIdx); updateLeds(ledBits);
+
       schedules[i].alarmActive = true;
       schedules[i].alarmStart = millis();         // start counting
       schedules[i].lastNotifiedDay = now.tm_mday; // Mark as notified today
@@ -104,10 +112,13 @@ void checkPillTimes() {
     }
 
     // Deactivation: touch sensor pressed
-    if (schedules[i].alarmActive && touchProximity(i)){
+    if (schedules[i].alarmActive && isTouched(todayIdx)){
       Serial.printf(">>> Alarm OFF, pill taken: %s <<<\n", schedules[i].pillname.c_str());
-      // digitalWrite(PIN_BUZZER, LOW);
+      digitalWrite(PIN_BUZZER, LOW);
       schedules[i].alarmActive = false;
+
+      // Update LEDs: clear today's slot LED
+      ledBits &= ~(1 << 7-todayIdx); updateLeds(ledBits);
 
       // Send medlog with status "taken"
       sendMedlog(schedules[i].pillname, now, "taken");
@@ -120,8 +131,11 @@ void checkPillTimes() {
     if (schedules[i].alarmActive &&
         millis() - schedules[i].alarmStart > alarmTimeoutMs){
       Serial.printf(">>> Alarm timeout, pill missed: %s <<<\n", schedules[i].pillname.c_str());
-      // digitalWrite(PIN_BUZZER, LOW);
+      digitalWrite(PIN_BUZZER, LOW);
       schedules[i].alarmActive = false;
+
+      // Update LEDs: clear today's slot LED
+      ledBits &= ~(1 << 7-todayIdx); updateLeds(ledBits);
 
       // Send medlog with status "missed"
       sendMedlog(schedules[i].pillname, now, "missed");

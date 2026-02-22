@@ -1,21 +1,18 @@
+#ifndef SHIFT74HC595_H
+#define SHIFT74HC595_H
+
+#include <Arduino.h>
+
 // ---------- 74HC595 pin map ----------
 const int PIN_SER   = 23; // DS - Serial Data
 const int PIN_CLK   = 18; // SHCP - Shift Clock
 const int PIN_LATCH = 19; // STCP - Latch Clock
 
-// ---------- LED animation ----------
-enum LedAnim { ANIM_SOLID, ANIM_BLINK };
-LedAnim activeAnim = ANIM_BLINK;
-const uint32_t BLINK_ON_MS  = 600;
-const uint32_t BLINK_OFF_MS = 400;
+// ---------- State ----------
+extern uint8_t ledBits;   // bitmask for LEDs
 
-uint8_t currentMask = 0;
-int     activeSlot  = -1;
-uint32_t animTimer  = 0;
-bool    animPhaseOn = true;
-
-// ---------- Shift register ----------
-void shiftSetup() {
+// ---------- Shift register setup ----------
+inline void shiftSetup() {
   pinMode(PIN_SER,   OUTPUT);
   pinMode(PIN_CLK,   OUTPUT);
   pinMode(PIN_LATCH, OUTPUT);
@@ -24,39 +21,25 @@ void shiftSetup() {
   digitalWrite(PIN_LATCH, LOW);
 }
 
-void shiftOutByte(uint8_t data) {
-  for (int i = 7; i >= 0; --i) {
+// ---------- Shift out one byte ----------
+inline void shiftOutByte(uint8_t data) {
+  for (int i = 7; i >= 0; --i) {   // MSB first
     digitalWrite(PIN_CLK, LOW);
     digitalWrite(PIN_SER, (data >> i) & 0x01);
     digitalWrite(PIN_CLK, HIGH);
   }
 }
 
-void updateLeds(uint8_t bits) {
-  currentMask = bits;
+// ---------- Update LEDs ----------
+inline void updateLeds(uint8_t bits) {
   digitalWrite(PIN_LATCH, LOW);
   shiftOutByte(bits);
   digitalWrite(PIN_LATCH, HIGH);
 }
 
-void setSlotSolid(int slot) {
-  if (slot < 1 || slot > 7) return;
-  activeSlot = slot;
-  activeAnim = ANIM_SOLID;
-  animPhaseOn = true;
-  updateLeds(1 << slot);
-}
-
-void setSlotBlink(int slot) {
-  if (slot < 1 || slot > 7) return;
-  activeSlot = slot;
-  activeAnim = ANIM_BLINK;
-  animPhaseOn = true;
-  animTimer = millis();
-  updateLeds(1 << slot);
-}
-
-void clearLeds() {
-  activeSlot = -1;
+// ---------- Clear all LEDs ----------
+inline void clearLeds() {
   updateLeds(0x00);
 }
+
+#endif

@@ -16,7 +16,7 @@ struct Schedule {
 
 extern String apiKey;
 extern String chipIdStr;
-extern Schedule schedules[10];   // adjust size as needed
+extern Schedule schedules[100];   // adjust size as needed
 extern int scheduleCount;
 
 bool parseDoseTime(const char* timeStr, struct tm* tmOut) {
@@ -73,7 +73,7 @@ void fetchSchedules() {
       if (deserializeJson(doc, payload) == DeserializationError::Ok) {
         scheduleCount = 0;
         for (JsonObject item : doc.as<JsonArray>()) {
-          if (scheduleCount >= 10) break; // prevent overflow
+          if (scheduleCount >= 50) break; // prevent overflow
           schedules[scheduleCount].pillname = item["pillname"].as<String>();
           parseDoseTime(item["dose_time"], &schedules[scheduleCount].doseTm);
           schedules[scheduleCount].repeat_days = item["repeat_days"];

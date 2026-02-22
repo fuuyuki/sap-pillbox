@@ -3,8 +3,8 @@
 
 #include <WiFi.h>
 
-const char* ssid = "Mangku Fuhrer";
-const char* password = "terkoneksi";
+const char* ssid = "bapak kau";
+const char* password = "12345678";
 
 const char* ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 7 * 3600;   // GMT+7 for Western Indonesia Time

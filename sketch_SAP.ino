@@ -4,11 +4,12 @@
 #include "touch.h"
 #include "alarms.h"
 #include "oled.h"
+#include "74hc595.h"
 
 String apiKey = "b6d1c1cda37e9e8bd4d3730d8a20f51882c5f97075b2cdc18c683f320a3172bb";
 String chipIdStr = "C87BC4286F24";
 
-Schedule schedules[10];
+Schedule schedules[100];
 int scheduleCount = 0;
 
 unsigned long lastHeartbeat = 0;
@@ -26,8 +27,6 @@ const unsigned long scheduleRefreshInterval = 900000; // 15 minutes
 
 void setup() {
   Serial.begin(115200);
-  
-  touchCalibrate();
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println("SSD1306 allocation failed");
@@ -35,6 +34,10 @@ void setup() {
   } 
   display.clearDisplay();
   display.display();
+
+  shiftSetup();
+  clearLeds();
+  pinMode(PIN_BUZZER,OUTPUT);
 
   connectWiFi();
   sendHeartbeat();
@@ -75,10 +78,8 @@ void loop() {
     lastScheduleRefresh = currentMillis; 
   }
 
-  // TOUCH TEST
-  // for (int i = 0; i < TOUCH_COUNTS; i++) {
-  //   if (touchProximity(i)) {
-  //     Serial.printf("Touch detected on pin %d\n", TOUCH_PINS[i]);
-  //   }
-  // }
+  // Debug test touchs + LEDs
+  // updateTouchLeds();
+  // delay(100);
+
 }
