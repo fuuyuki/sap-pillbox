@@ -7,8 +7,8 @@
 #include "74hc595.h"
 
 String apiKey = "b6d1c1cda37e9e8bd4d3730d8a20f51882c5f97075b2cdc18c683f320a3172bb";
-String chipIdStr = "F4A2B6B24354"; // SAP 01
-// String chipIdStr = "C87BC4286F24"; // SAP 02
+// String chipIdStr = "F4A2B6B24354"; // SAP 01
+String chipIdStr = "C87BC4286F24"; // SAP 02
 // String chipIdStr = "F0B5AD286F24"; // SAP 03
 // String chipIdStr = "00DE3855B594"; // SAP 04 bulge dibagian tutup bawah depan
 Schedule schedules[10];
@@ -35,9 +35,8 @@ void setup() {
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println("SSD1306 allocation failed");
     for(;;); // halt
-  } 
-  display.clearDisplay();
-  display.display();
+  }
+  oledPrint("Booting...", "Starting Pillbox");
 
   // 74hc595.h
   shiftSetup();
@@ -75,7 +74,10 @@ void loop() {
     struct tm now;
     
     if (getLocalTime(&now)) {
-      oledShowTime(now, "Online"); // status can be "Online", "Offline", etc.
+      bool online = (WiFi.status() == WL_CONNECTED);
+      // bool heartbeat = heartbeatActive; // your own flag
+      oledShowTime(now, online);
+      // oledShowTime(now, "Online"); // status can be "Online", "Offline", etc.
     }
     lastOledUpdate = currentMillis; 
   }
