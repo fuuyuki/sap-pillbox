@@ -2,17 +2,21 @@
 #define HEARTBEAT_H
 
 #include <HTTPClient.h>
-#include "time.h"
+#include "oled.h"
 
 // Declare extern so they are defined in main.ino
 extern String apiKey;
 extern String chipIdStr;
+
+// Global heartbeat status flag
+bool heartbeatActive = false;
 
 void sendHeartbeat() {
   if (WiFi.status() == WL_CONNECTED) {
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) {
       Serial.println("Failed to obtain time");
+      heartbeatActive = false;
       return;
     }
 
@@ -28,7 +32,13 @@ void sendHeartbeat() {
 
     int httpResponseCode = http.POST(payload);
     Serial.printf("Heartbeat response: %d\n", httpResponseCode);
+
+    // Update heartbeat status flag
+    heartbeatActive = (httpResponseCode >= 200 && httpResponseCode < 300);
+
     http.end();
+  } else {
+    heartbeatActive = false;
   }
 }
 
