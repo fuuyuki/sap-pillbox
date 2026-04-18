@@ -1,27 +1,51 @@
 #ifndef WIFI_SETUP_H
 #define WIFI_SETUP_H
 
-#include <WiFi.h>
+#include <WiFiManager.h>
+#include "oled.h"
+#include <time.h>
 
-const char* ssid = "bapak kau";
-const char* password = "12345678";
-
+// NTP server settings
 const char* ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 7 * 3600;   // GMT+7 for Western Indonesia Time
+const long gmtOffset_sec = 7 * 3600;   // Jakarta GMT+7
 const int daylightOffset_sec = 0;
 
-void connectWiFi() {
-  pinMode(22,OUTPUT);
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
-    digitalWrite(22,HIGH);
-    delay(500);
-    Serial.print(".");
+// ---------- WiFi + NTP Setup ----------
+void wifiSetup() {
+  // Initialize OLED
+  Wire.begin(SDA_PIN, SCL_PIN);
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println("SSD1306 allocation failed");
+    for(;;); // halt
   }
-  digitalWrite(22,LOW);
-  // Serial.println("\nConnected to WiFi!");
+  oledPrint("Booting...", "Starting Pillbox");
+
+  WiFiManager wifiManager;
+  wifiManager.setTimeout(180); // 3 minutes fallback
+
+  oledPrint("WiFi Setup", "Connecting...");
+
+  // Try saved credentials, else start AP
+  if (!wifiManager.autoConnect("Pillbox_AP")) {
+    oledPrint("WiFi Failed", "Restarting...");
+    ESP.restart();
+  }
+
+  oledPrint("WiFi OK", WiFi.SSID().c_str());
+  Serial.println("Connected to WiFi!");
+
+  // Configure NTP
+  oledPrint("NTP Sync", "Getting time...");
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    oledPrint("NTP Failed", "Restarting...");
+    delay(2000);
+    ESP.restart();
+  }
+
+  oledShowTime(timeinfo, "Time OK");
 }
 
 #endif

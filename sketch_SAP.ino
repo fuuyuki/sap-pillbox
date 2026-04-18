@@ -30,6 +30,7 @@ const unsigned long scheduleRefreshInterval = 900000; // 15 minutes
 void setup() {
   Serial.begin(115200);
 
+  // oled.h
   Wire.begin(SDA_PIN, SCL_PIN);
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println("SSD1306 allocation failed");
@@ -38,11 +39,15 @@ void setup() {
   display.clearDisplay();
   display.display();
 
+  // 74hc595.h
   shiftSetup();
   clearLeds();
   pinMode(PIN_BUZZER,OUTPUT);
 
-  connectWiFi();
+  // connectWiFi();
+  // wifi_setup.h
+  wifiSetup();   // handles WiFi + NTP + OLED status
+  // heartbeat.h
   sendHeartbeat();
 
   refreshDeviceData();
