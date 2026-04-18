@@ -9,7 +9,7 @@
 // Declare extern so they’re defined in main.ino
 extern String apiKey; 
 extern String chipIdStr;  // device_id
-const unsigned long alarmTimeoutMs = 30UL * 1000UL; // 30 seconds
+const unsigned long alarmTimeoutMs = 15UL * 1000UL; // 30 seconds
 // const unsigned long alarmTimeoutMs = 3UL * 60UL * 60UL * 1000UL // 3 hours
 const int PIN_BUZZER = 26;
 
