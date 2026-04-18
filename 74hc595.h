@@ -2,6 +2,7 @@
 #define SHIFT74HC595_H
 
 #include <Arduino.h>
+#include "oled.h"
 
 // ---------- 74HC595 pin map ----------
 const int PIN_SER   = 23; // DS - Serial Data
@@ -42,4 +43,15 @@ inline void clearLeds() {
   updateLeds(0x00);
 }
 
+inline void ledTest(){
+  // LED Sequential
+  for (int i = 1; i < 8; i++) {
+    // Create a mask with only the i-th bit set
+    uint8_t mask = (1 << i);
+    updateLeds(mask);   // Turn on LED i
+    delay(500);         // Wait half a second
+    updateLeds(0b00000000); // Turn off all LEDs
+    delay(200);         // Small gap before next LED
+  }
+}
 #endif
