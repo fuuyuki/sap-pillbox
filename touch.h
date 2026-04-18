@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 // --- Touch pins ---
-const int TOUCH_PINS[] = {4, 2, 15, 13, 27, 14, 12};
+const int TOUCH_PINS[] = {4, 25, 33, 13, 27, 14, 12};
 const int TOUCH_COUNTS = 7;
 
 // // --- Thresholds per sensor (adjust individually) ---
