@@ -38,7 +38,7 @@ void wifiSetup() {
     ESP.restart();
   }
 
-  oledShowTime(timeinfo, "Time OK");
+  // oledShowTime(timeinfo, "Time OK");
 }
 
 #endif
