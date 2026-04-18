@@ -12,13 +12,6 @@ const int daylightOffset_sec = 0;
 
 // ---------- WiFi + NTP Setup ----------
 void wifiSetup() {
-  // Initialize OLED
-  Wire.begin(SDA_PIN, SCL_PIN);
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println("SSD1306 allocation failed");
-    for(;;); // halt
-  }
-  oledPrint("Booting...", "Starting Pillbox");
 
   WiFiManager wifiManager;
   wifiManager.setTimeout(180); // 3 minutes fallback
