@@ -2,7 +2,6 @@
 #define SHIFT74HC595_H
 
 #include <Arduino.h>
-#include "oled.h"
 
 // ---------- 74HC595 pin map ----------
 const int PIN_SER   = 23; // DS - Serial Data
