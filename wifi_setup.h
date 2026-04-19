@@ -3,6 +3,7 @@
 
 #include <WiFiManager.h>
 #include "oled.h"
+#include "device_id.h"
 #include <time.h>
 
 // NTP server settings
@@ -19,7 +20,8 @@ void wifiSetup() {
   oledPrint("WiFi Setup", "Connecting...");
 
   // Try saved credentials, else start AP
-  if (!wifiManager.autoConnect("Pillbox_AP")) {
+  // Use deviceName (SAP_0X) as the AP SSID
+  if (!wifiManager.autoConnect(deviceName.c_str())) {
     oledPrint("WiFi Failed", "Restarting...");
     ESP.restart();
   }
@@ -37,8 +39,6 @@ void wifiSetup() {
     delay(2000);
     ESP.restart();
   }
-
-  // oledShowTime(timeinfo, "Time OK");
 }
 
 #endif
