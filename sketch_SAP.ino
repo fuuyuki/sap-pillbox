@@ -12,7 +12,6 @@ Schedule schedules[10];
 int scheduleCount = 0;
 uint8_t ledBits = 0;
 
-
 unsigned long lastHeartbeat = 0;
 const unsigned long heartbeatInterval = 30000; // 30s
 
@@ -23,7 +22,7 @@ unsigned long lastOledUpdate = 0;
 const unsigned long oledInterval = 1000; // update OLED every second
 
 unsigned long lastScheduleRefresh = 0;
-const unsigned long scheduleRefreshInterval = 900000; // 15 minutes
+const unsigned long scheduleRefreshInterval = 300000; // 5 minutes
 
 
 void setup() {
@@ -41,6 +40,8 @@ void setup() {
   clearLeds();
   touchSetup();
   pinMode(PIN_BUZZER,OUTPUT);
+  digitalWrite(PIN_BUZZER,HIGH); delay(2000); digitalWrite(PIN_BUZZER,LOW);
+  ledTest();
 
   // Initialize chip ID and device name
   initDeviceId();
@@ -135,7 +136,5 @@ void loop() {
   // for (int i = TOUCH_COUNTS - 1; i >= 0; i--) {
   //   Serial.print((ledBits & (1 << i)) ? "1" : "0");
   // }
-  // Serial.println();
-
-  // delay(100);
+  // Serial.println(); delay(200);
 }

@@ -15,7 +15,7 @@ const int daylightOffset_sec = 0;
 void wifiSetup() {
 
   WiFiManager wifiManager;
-  wifiManager.setTimeout(180); // 3 minutes fallback
+  wifiManager.setTimeout(60); // 3 minutes fallback
 
   oledPrint("WiFi Setup", "Connecting...");
 

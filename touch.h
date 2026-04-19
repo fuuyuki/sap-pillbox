@@ -5,7 +5,8 @@
 #include "74hc595.h"
 
 // --- Touch pins (TTP223 digital outputs) ---
-const int TOUCH_PINS[] = {4, 25, 33, 13, 27, 14, 12};
+// const int TOUCH_PINS[] = {12, 14, 27, 13, 25, 33, 4};
+const int TOUCH_PINS[] = {4, 33, 25, 13, 27, 14, 12};
 const int TOUCH_COUNTS = sizeof(TOUCH_PINS) / sizeof(TOUCH_PINS[0]);
 
 // --- LED state mask ---
@@ -33,6 +34,12 @@ inline void updateTouchLeds() {
       newMask |= (1 << i+1);   // LED ON if touched (+1 because we use Q1-Q7)
     }
   }
+  // For SAP01
+  // for (int i = 0; i < TOUCH_COUNTS; i++) {
+  //   if (isTouched(6-i)) {
+  //     newMask |= (1 << i+1);   // LED ON if touched (+1 because we use Q1-Q7)
+  //   }
+  // }
   ledBits = newMask;
   updateLeds(ledBits); // push to 74HC595
 }

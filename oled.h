@@ -104,7 +104,7 @@ void oledShowTime(const struct tm &t, bool online,  bool heartbeat, const char* 
   } else {
     display.setCursor(0, y);
     display.setTextSize(1);
-    display.print("No WiFi");
+    display.print("WiFi");
     display.drawBitmap(25, y, crossIcon, 8, 8, SSD1306_WHITE);
   }
 

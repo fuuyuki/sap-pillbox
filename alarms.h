@@ -1,6 +1,7 @@
 #ifndef ALARMS_H
 #define ALARMS_H
 
+#include <Arduino.h>
 #include "time.h"
 #include "schedules.h"
 #include "74hc595.h"
@@ -9,8 +10,8 @@
 // Declare extern so they’re defined in main.ino
 extern String apiKey; 
 extern String chipIdStr;  // device_id
-const unsigned long alarmTimeoutMs = 15UL * 1000UL; // 30 seconds
-// const unsigned long alarmTimeoutMs = 3UL * 60UL * 60UL * 1000UL // 3 hours
+// const unsigned long alarmTimeoutMs = 15UL * 1000UL; // 30 seconds
+const unsigned long alarmTimeoutMs = 3UL * 60UL * 60UL * 1000UL; // 3 hours
 const int PIN_BUZZER = 26;
 
 String userId = ""; // will be fetched
